@@ -13,8 +13,7 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   late ConfiguracoesRepository configuracoes;
-  var configuracoesModel = ConfiguracoesModel.vazio();
-  bool showMainPage = false;
+  var configuracoesModel = ConfiguracoesModel();
 
   @override
   void initState() {
@@ -79,7 +78,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     contentPadding: EdgeInsets.zero,
                     controlAffinity: ListTileControlAffinity.leading,
                     dense: true,
-                    value: showMainPage,
+                    value: configuracoesModel.showMainPage ?? false,
                     title: const Text(
                       "Mostrar página inicial ao entrar no app?",
                       style: TextStyle(
@@ -88,7 +87,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        showMainPage = value!;
+                        configuracoesModel.showMainPage = value!;
                       });
                     },
                   ),
@@ -108,8 +107,13 @@ class _WelcomePageState extends State<WelcomePage> {
                       backgroundColor: MaterialStateProperty.all(
                           const Color.fromARGB(255, 52, 0, 61))),
                   onPressed: () {
-                    if (configuracoesModel.showMainPage != showMainPage) {
+                    if (configuracoesModel.key != null) {
                       configuracoes.salvar(configuracoesModel);
+                    } else {
+                      bool showMain = configuracoesModel.showMainPage!;
+                      var configuracoesModelAjuste = ConfiguracoesModel.vazio();
+                      configuracoesModelAjuste.showMainPage = showMain;
+                      configuracoes.salvar(configuracoesModelAjuste);
                     }
                     Navigator.pushReplacement(
                         context,
